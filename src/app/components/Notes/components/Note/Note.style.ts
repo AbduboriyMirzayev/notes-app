@@ -13,6 +13,7 @@ export default styled.li`
     background-color: transparent;
     padding: ${pxToRem(16)} ${pxToRem(22)};
     cursor: pointer;
+    text-align: left;
 
     &:hover {
       background-color: ${colors.grey}40;

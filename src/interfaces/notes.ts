@@ -3,8 +3,3 @@ export interface INote {
   content: string;
   createdAt: string;
 }
-
-export interface IUpdateNote {
-  id: number;
-  content?: string;
-}

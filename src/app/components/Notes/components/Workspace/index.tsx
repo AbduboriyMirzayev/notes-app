@@ -1,31 +1,46 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { formatDDMMYYYY, formatHours } from "../../helpers";
 import Style from "./Workspace.style";
+import { ContextApi } from "context";
+import { INote } from "interfaces/notes";
 
-type Props = {};
+function Workspace() {
+  const [note, setNote] = useState<INote | null>(null);
+  const { getSelectedNote, selectedNote, editingNoteId, updateNote } =
+    useContext(ContextApi);
 
-function Workspace({}: Props) {
+  useEffect(() => {
+    if (!selectedNote) {
+      setNote(null);
+    } else if (selectedNote || editingNoteId) {
+      getSelectedNote(setNote);
+    }
+  }, [selectedNote, editingNoteId]);
+
+  const changeHandler = (content: string) => {
+    note && updateNote({ ...note, content });
+  };
+
   return (
     <Style>
-      <p className="workspace__title">
-        {formatDDMMYYYY(new Date())} at {formatHours(new Date())}
-      </p>
-      <pre className="workspace__text">
-        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Esse at
-        impedit ab labore commodi repudiandae neque? Magnam possimus tempora
-        dicta delectus eaque corporis commodi praesentium libero, blanditiis,
-        nobis veritatis illo?
-      </pre>
-
-      <textarea
-        className="workspace__textarea"
-        onChange={(e) => console.log(e.target.value)}
-      >
-        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Esse at
-        impedit ab labore commodi repudiandae neque? Magnam possimus tempora
-        dicta delectus eaque corporis commodi praesentium libero, blanditiis,
-        nobis veritatis illo?
-      </textarea>
+      {note && (
+        <>
+          <p className="workspace__title">
+            {formatDDMMYYYY(new Date(note.createdAt))} at{" "}
+            {formatHours(new Date(note.createdAt))}
+          </p>
+          {!editingNoteId ? (
+            <pre className="workspace__text">{note.content}</pre>
+          ) : (
+            <textarea
+              className="workspace__textarea"
+              onChange={(e) => changeHandler(e.target.value)}
+              autoFocus
+              defaultValue={note.content}
+            />
+          )}
+        </>
+      )}
     </Style>
   );
 }

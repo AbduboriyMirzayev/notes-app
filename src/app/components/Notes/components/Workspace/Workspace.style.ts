@@ -27,6 +27,7 @@ export default styled.div`
     border: none;
     outline: none;
     resize: none;
+    padding: 0;
   }
 
   @media (max-width: 650px) {

@@ -1,9 +1,14 @@
-import React, { createContext, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Header from "./components/Header";
 import Notes from "./components/Notes";
 import Workspace from "./components/Notes/components/Workspace";
 import Style from "./App.style";
-import { createEmptyNote, getNotes } from "services/indexeddb.service";
+import {
+  createEmptyNote,
+  deleteNote,
+  getNote,
+  getNotes,
+} from "services/indexeddb.service";
 import { INote } from "interfaces/notes";
 import { updateNote } from "services/indexeddb.service";
 import { ContextApi, IContextValues } from "context";
@@ -11,11 +16,20 @@ import { ContextApi, IContextValues } from "context";
 function App() {
   const [notes, setNotes] = useState<INote[]>([]);
   const [selectedNote, setSelectedNote] = useState<number | null>(null);
+  const [editingNoteId, setEditingNoteId] = useState<number | null>(null);
 
   const getNotesFromDb = () => {
     getNotes((res: INote[]) => {
-      setNotes(res);
+      setNotes(res.reverse());
     });
+  };
+
+  const setEditingNode = () => {
+    setEditingNoteId((prev) => (prev ? null : selectedNote));
+  };
+  const selectNoteHandler = (id: number) => {
+    setSelectedNote(id);
+    setEditingNoteId(null);
   };
 
   const createNoteHandler = () => {
@@ -24,31 +38,44 @@ function App() {
       content: "",
       createdAt: new Date().toString(),
     };
-    createEmptyNote(emptyNote, getNotesFromDb);
+    createEmptyNote(emptyNote, () => {
+      getNotesFromDb();
+      setSelectedNote(emptyNote.id);
+      setEditingNoteId(null);
+    });
   };
 
-  const updateNoteHandler = () => {
-    // updateNote({ id }, getNotesFromDb);
+  const getSelectedNote = (setNote: (note: INote) => void) => {
+    selectedNote && getNote(selectedNote, setNote);
+  };
+
+  const updateNoteHandler = (note: INote) => {
+    updateNote(note, getNotesFromDb);
   };
 
   const deleteNodeHandler = () => {
-    // deleteNote();
+    const cb = () => {
+      setSelectedNote(null);
+      setEditingNoteId(null);
+      getNotesFromDb();
+    };
+    selectedNote && deleteNote(selectedNote, cb);
   };
 
   const searchNoteHandler = () => {};
 
-  const contextValue: IContextValues = useMemo(
-    () => ({
-      notes,
-      selectedNote,
-      createNote: createNoteHandler,
-      updateNote: updateNoteHandler,
-      deleteNote: deleteNodeHandler,
-      searchNote: searchNoteHandler,
-      setSelectedNote,
-    }),
-    [notes, selectedNote]
-  );
+  const contextValue: IContextValues = {
+    notes,
+    selectedNote,
+    createNote: createNoteHandler,
+    updateNote: updateNoteHandler,
+    deleteNote: deleteNodeHandler,
+    searchNote: searchNoteHandler,
+    setSelectedNote: selectNoteHandler,
+    setEditingNode,
+    getSelectedNote,
+    editingNoteId,
+  };
 
   useEffect(() => {
     getNotesFromDb();

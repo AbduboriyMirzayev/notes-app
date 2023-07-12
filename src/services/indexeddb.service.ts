@@ -1,4 +1,4 @@
-import { INote, IUpdateNote } from "interfaces/notes";
+import { INote } from "interfaces/notes";
 
 let db: IDBDatabase;
 
@@ -33,7 +33,9 @@ const checkDBInitialization = () =>
     };
   });
 
-export const createEmptyNote = (note: INote, cb: VoidFunction) => {
+export const createEmptyNote = async (note: INote, cb: VoidFunction) => {
+  await checkDBInitialization();
+
   const customerObjectStore = db
     .transaction("notes", "readwrite")
     .objectStore("notes");
@@ -44,7 +46,7 @@ export const createEmptyNote = (note: INote, cb: VoidFunction) => {
   };
 };
 
-export const updateNote = (note: IUpdateNote, cb: VoidFunction) => {
+export const updateNote = (note: INote, cb: VoidFunction) => {
   const objectStore = db.transaction("notes", "readwrite").objectStore("notes");
   var request = objectStore.put(note);
 
@@ -56,8 +58,6 @@ export const updateNote = (note: IUpdateNote, cb: VoidFunction) => {
 export const deleteNote = (noteId: number, cb: VoidFunction) => {
   const objectStore = db.transaction("notes", "readwrite").objectStore("notes");
   const deleteRequest = objectStore.delete(noteId);
-  const index = objectStore.index("isSelected");
-  const getedKey = index.getKey("true");
   deleteRequest.onsuccess = () => {
     cb();
   };
@@ -82,5 +82,17 @@ export const getNotes = async (
     if (errorHandler) {
       errorHandler();
     }
+  };
+};
+
+export const getNote = async (id: number, cb: (note: INote) => void) => {
+  await checkDBInitialization();
+  const note = db
+    .transaction("notes", "readwrite")
+    .objectStore("notes")
+    .get(id);
+
+  note.onsuccess = () => {
+    cb(note.result);
   };
 };

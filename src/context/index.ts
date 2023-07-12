@@ -1,25 +1,30 @@
 import { INote } from "interfaces/notes";
 import { createContext } from "react";
-import { IUpdateNote } from "interfaces/notes";
 
 export interface IContextValues {
   notes: INote[];
   selectedNote: null | number;
+  editingNoteId: null | number;
   setSelectedNote: (id: number) => void;
-  createNote: VoidFunction;
-  updateNote: (note: IUpdateNote) => void;
-  deleteNote: (id: number) => void;
+  updateNote: (note: INote) => void;
   searchNote: (searchText: string) => void;
+  getSelectedNote: (cb: (node: INote) => void) => void;
+  createNote: VoidFunction;
+  deleteNote: VoidFunction;
+  setEditingNode: VoidFunction;
 }
 
 const initialValues: IContextValues = {
   notes: [],
   selectedNote: null,
+  editingNoteId: null,
   createNote: () => {},
   setSelectedNote: () => {},
   updateNote: () => {},
   deleteNote: () => {},
   searchNote: () => {},
+  getSelectedNote: () => {},
+  setEditingNode: () => {},
 };
 
 export const ContextApi = createContext(initialValues);
