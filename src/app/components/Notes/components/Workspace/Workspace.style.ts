@@ -23,7 +23,21 @@ export default styled.div`
   .workspace__textarea {
     width: 100%;
     height: 70vh;
+    font-size: ${pxToRem(16)};
     border: none;
     outline: none;
+    resize: none;
+  }
+
+  @media (max-width: 650px) {
+    & {
+      padding: ${pxToRem(20)};
+    }
+  }
+
+  @media (max-width: 400px) {
+    & {
+      padding: ${pxToRem(20)} ${pxToRem(14)};
+    }
   }
 `;

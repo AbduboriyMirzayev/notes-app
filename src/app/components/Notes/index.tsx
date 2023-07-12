@@ -1,11 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import Note from "./components/Note";
 import Style from "./Notes.style";
-import { INote } from "interfaces/notes";
+import { ContextApi } from "context";
 
-type Props = { notes: INote[] };
-
-function Notes({ notes }: Props) {
+function Notes() {
+  const { notes, setSelectedNote, selectedNote } = useContext(ContextApi);
   return (
     <Style>
       {notes.map((note) => (
@@ -13,6 +12,9 @@ function Notes({ notes }: Props) {
           title={note.content}
           key={note.id}
           subtext="Lorem ipsum dolor, sit amet consectetur"
+          createdAt={note.createdAt}
+          isActive={selectedNote == note.id}
+          selectHandler={() => setSelectedNote(note.id)}
         />
       ))}
     </Style>

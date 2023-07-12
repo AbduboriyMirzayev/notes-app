@@ -4,4 +4,7 @@ export interface INote {
   createdAt: string;
 }
 
-export type VoidFnWithoutArgs = () => void;
+export interface IUpdateNote {
+  id: number;
+  content?: string;
+}

@@ -1,18 +1,17 @@
 import Button from "Ui/Button";
 import Input from "Ui/Input";
-import { CreateIcon, DeleteIcon, EditIcon, SearchIcon } from "assets/icons";
-import React from "react";
+import { CreateIcon, DeleteIcon, EditIcon } from "assets/icons";
+import React, { useContext } from "react";
 import Style from "./Header.style";
-import { VoidFnWithoutArgs } from "interfaces/notes";
+import { ContextApi } from "context";
 
-type Props = { createHandler: VoidFnWithoutArgs };
-
-function Header({ createHandler }: Props) {
+function Header() {
+  const { createNote } = useContext(ContextApi);
   return (
     <Style>
       <ul className="header__list">
         <li className="header__list-item">
-          <Button onClick={createHandler}>
+          <Button onClick={createNote}>
             <CreateIcon />
           </Button>
         </li>

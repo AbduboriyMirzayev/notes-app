@@ -1,64 +1,6 @@
-import { INote, VoidFnWithoutArgs } from "interfaces/notes";
+import { INote, IUpdateNote } from "interfaces/notes";
 
 let db: IDBDatabase;
-
-const notesList = [
-  {
-    content: "Внешний вид программы состоит из:",
-    createdAt: new Date(),
-    id: Date.now(),
-  },
-  {
-    content: "Внешний вид программы состоит из:",
-    createdAt: new Date(),
-    id: Date.now(),
-  },
-  {
-    content: "Внешний вид программы состоит из:",
-    createdAt: new Date(),
-    id: Date.now(),
-  },
-  {
-    content: "Внешний вид программы состоит из:",
-    createdAt: new Date(),
-    id: Date.now(),
-  },
-  {
-    content: "Внешний вид программы состоит из:",
-    createdAt: new Date(),
-    id: Date.now(),
-  },
-  {
-    content: "Внешний вид программы состоит из:",
-    createdAt: new Date(),
-    id: Date.now(),
-  },
-  {
-    content: "Внешний вид программы состоит из:",
-    createdAt: new Date(),
-    id: Date.now(),
-  },
-  {
-    content: "Внешний вид программы состоит из:",
-    createdAt: new Date(),
-    id: Date.now(),
-  },
-  {
-    content: "Внешний вид программы состоит из:",
-    createdAt: new Date(),
-    id: Date.now(),
-  },
-  {
-    content: "Внешний вид программы состоит из:",
-    createdAt: new Date(),
-    id: Date.now(),
-  },
-  {
-    content: "Внешний вид программы состоит из:",
-    createdAt: new Date(),
-    id: Date.now(),
-  },
-];
 
 const checkDBInitialization = () =>
   new Promise((res, rej) => {
@@ -86,11 +28,12 @@ const checkDBInitialization = () =>
         objectStore.createIndex("id", "id", { unique: true });
         objectStore.createIndex("content", "content", { unique: false });
         objectStore.createIndex("createdAt", "createdAt", { unique: false });
+        objectStore.createIndex("isSelected", "isSelected", { unique: false });
       }
     };
   });
 
-export const createEmptyNote = (note: INote, cb: VoidFnWithoutArgs) => {
+export const createEmptyNote = (note: INote, cb: VoidFunction) => {
   const customerObjectStore = db
     .transaction("notes", "readwrite")
     .objectStore("notes");
@@ -101,10 +44,20 @@ export const createEmptyNote = (note: INote, cb: VoidFnWithoutArgs) => {
   };
 };
 
-export const deleteNote = (noteId: number, cb: VoidFnWithoutArgs) => {
+export const updateNote = (note: IUpdateNote, cb: VoidFunction) => {
+  const objectStore = db.transaction("notes", "readwrite").objectStore("notes");
+  var request = objectStore.put(note);
+
+  request.onsuccess = () => {
+    cb();
+  };
+};
+
+export const deleteNote = (noteId: number, cb: VoidFunction) => {
   const objectStore = db.transaction("notes", "readwrite").objectStore("notes");
   const deleteRequest = objectStore.delete(noteId);
-
+  const index = objectStore.index("isSelected");
+  const getedKey = index.getKey("true");
   deleteRequest.onsuccess = () => {
     cb();
   };
@@ -112,7 +65,7 @@ export const deleteNote = (noteId: number, cb: VoidFnWithoutArgs) => {
 
 export const getNotes = async (
   callback: (notes: INote[]) => void,
-  errorHandler?: VoidFnWithoutArgs
+  errorHandler?: VoidFunction
 ) => {
   await checkDBInitialization();
 
