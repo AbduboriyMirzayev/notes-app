@@ -1,67 +1,11 @@
 import React from "react";
 import Note from "./components/Note";
 import Style from "./Notes.style";
-type Props = {};
+import { INote } from "interfaces/notes";
 
-const notes = [
-  {
-    content: "Внешний вид программы состоит из:",
-    createdAt: new Date(),
-    id: Date.now(),
-  },
-  {
-    content: "Внешний вид программы состоит из:",
-    createdAt: new Date(),
-    id: Date.now(),
-  },
-  {
-    content: "Внешний вид программы состоит из:",
-    createdAt: new Date(),
-    id: Date.now(),
-  },
-  {
-    content: "Внешний вид программы состоит из:",
-    createdAt: new Date(),
-    id: Date.now(),
-  },
-  {
-    content: "Внешний вид программы состоит из:",
-    createdAt: new Date(),
-    id: Date.now(),
-  },
-  {
-    content: "Внешний вид программы состоит из:",
-    createdAt: new Date(),
-    id: Date.now(),
-  },
-  {
-    content: "Внешний вид программы состоит из:",
-    createdAt: new Date(),
-    id: Date.now(),
-  },
-  {
-    content: "Внешний вид программы состоит из:",
-    createdAt: new Date(),
-    id: Date.now(),
-  },
-  {
-    content: "Внешний вид программы состоит из:",
-    createdAt: new Date(),
-    id: Date.now(),
-  },
-  {
-    content: "Внешний вид программы состоит из:",
-    createdAt: new Date(),
-    id: Date.now(),
-  },
-  {
-    content: "Внешний вид программы состоит из:",
-    createdAt: new Date(),
-    id: Date.now(),
-  },
-];
+type Props = { notes: INote[] };
 
-function Notes({}: Props) {
+function Notes({ notes }: Props) {
   return (
     <Style>
       {notes.map((note) => (

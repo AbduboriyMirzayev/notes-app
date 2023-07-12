@@ -3,15 +3,16 @@ import Input from "Ui/Input";
 import { CreateIcon, DeleteIcon, EditIcon, SearchIcon } from "assets/icons";
 import React from "react";
 import Style from "./Header.style";
+import { VoidFnWithoutArgs } from "interfaces/notes";
 
-type Props = {};
+type Props = { createHandler: VoidFnWithoutArgs };
 
-function Header({}: Props) {
+function Header({ createHandler }: Props) {
   return (
     <Style>
       <ul className="header__list">
         <li className="header__list-item">
-          <Button>
+          <Button onClick={createHandler}>
             <CreateIcon />
           </Button>
         </li>
