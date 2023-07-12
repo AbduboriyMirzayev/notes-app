@@ -11,12 +11,18 @@ export default styled.li`
     padding: 0;
     border: transparent;
     background-color: transparent;
-    padding: ${pxToRem(15)} ${pxToRem(22)};
+    padding: ${pxToRem(16)} ${pxToRem(22)};
     cursor: pointer;
+    text-align: left;
 
     &:hover {
       background-color: ${colors.grey}40;
     }
+  }
+
+  .note__button--active,
+  .note__button--active:hover {
+    background-color: ${colors.grey};
   }
 
   .note__title {
@@ -45,5 +51,18 @@ export default styled.li`
     font-weight: 200;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  @media (max-width: 650px) {
+    .note__button {
+      padding: ${pxToRem(16)};
+    }
+  }
+
+  @media (max-width: 400px) {
+    .note__wrapper {
+      flex-direction: column-reverse;
+      text-align: left;
+    }
   }
 `;

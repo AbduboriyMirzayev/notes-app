@@ -1,33 +1,51 @@
+import React, { useContext, useState } from "react";
 import Button from "Ui/Button";
 import Input from "Ui/Input";
-import { CreateIcon, DeleteIcon, EditIcon, SearchIcon } from "assets/icons";
-import React from "react";
+import { CreateIcon, DeleteIcon, EditIcon } from "assets/icons";
 import Style from "./Header.style";
-import { VoidFnWithoutArgs } from "interfaces/notes";
+import { ContextApi } from "context";
+import DeleteModal from "./DeleteModal";
 
-type Props = { createHandler: VoidFnWithoutArgs };
+function Header() {
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
 
-function Header({ createHandler }: Props) {
+  const { createNote, setEditingNode, selectedNote, deleteNote } =
+    useContext(ContextApi);
+
+  const deleteModalVisibleHandler = () =>
+    setIsDeleteModalVisible((prev) => !prev);
+
+  const deleteHandler = () => {
+    deleteNote();
+    deleteModalVisibleHandler();
+  };
+
   return (
     <Style>
       <ul className="header__list">
         <li className="header__list-item">
-          <Button onClick={createHandler}>
+          <Button onClick={createNote}>
             <CreateIcon />
           </Button>
         </li>
         <li className="header__list-item">
-          <Button>
+          <Button disabled={!selectedNote} onClick={deleteModalVisibleHandler}>
             <DeleteIcon />
           </Button>
         </li>
         <li className="header__list-item">
-          <Button>
+          <Button onClick={setEditingNode} disabled={!selectedNote}>
             <EditIcon />
           </Button>
         </li>
       </ul>
       <Input className="header__search" placeholder={"Поиск"} />
+      {isDeleteModalVisible && (
+        <DeleteModal
+          onDelete={deleteHandler}
+          closeHandler={deleteModalVisibleHandler}
+        />
+      )}
     </Style>
   );
 }

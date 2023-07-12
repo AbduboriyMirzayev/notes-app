@@ -16,7 +16,14 @@ export default styled.header`
     margin: 0;
   }
 
-  .header__search::placeholder {
-    text-align: center;
+  .header__search {
+    padding: ${pxToRem(12)};
+    max-width: ${pxToRem(160)};
+  }
+
+  @media (max-width: 450px) {
+    .header__search {
+      width: ${pxToRem(120)};
+    }
   }
 `;

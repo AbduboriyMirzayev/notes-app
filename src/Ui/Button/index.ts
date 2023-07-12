@@ -11,8 +11,8 @@ export default styled.button`
   border: ${pxToRem(1)} solid ${colors.grey};
   cursor: pointer;
 
-  :disabled {
+  &:disabled {
     cursor: auto;
-    background-color: ${colors.grey};
+    opacity: 0.6;
   }
 `;
