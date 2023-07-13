@@ -8,7 +8,7 @@ function Notes() {
   return (
     <Style>
       {notes.map((note) => {
-        const splitedContent = note.content.split(" ");
+        const splitedContent = note.content.split(" ", 13);
         const title = splitedContent.slice(0, 6).join(" ");
         const subtext = splitedContent.slice(6, 12).join(" ");
         return (
@@ -17,7 +17,7 @@ function Notes() {
             key={note.id}
             subtext={subtext}
             createdAt={note.createdAt}
-            isActive={selectedNote == note.id}
+            isActive={selectedNote === note.id}
             selectHandler={() => setSelectedNote(note.id)}
           />
         );

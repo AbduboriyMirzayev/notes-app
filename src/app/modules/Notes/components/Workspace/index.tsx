@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
-import { formatDDMMYYYY, formatHours } from "../../helpers";
+import React, { ChangeEvent, useContext, useEffect, useState } from "react";
+import { formatDate, formatHours } from "../../helpers";
 import Style from "./Workspace.style";
 import { ContextApi } from "context";
 import { INote } from "interfaces/notes";
@@ -17,8 +17,8 @@ function Workspace() {
     }
   }, [selectedNote, editingNoteId]);
 
-  const changeHandler = (content: string) => {
-    note && updateNote({ ...note, content });
+  const changeHandler = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    note && updateNote({ ...note, content: e.target.value });
   };
 
   return (
@@ -26,7 +26,7 @@ function Workspace() {
       {note && (
         <>
           <p className="workspace__title">
-            {formatDDMMYYYY(new Date(note.createdAt))} at{" "}
+            {formatDate(new Date(note.createdAt))} at{" "}
             {formatHours(new Date(note.createdAt))}
           </p>
           {!editingNoteId ? (
@@ -34,7 +34,7 @@ function Workspace() {
           ) : (
             <textarea
               className="workspace__textarea"
-              onChange={(e) => changeHandler(e.target.value)}
+              onChange={changeHandler}
               autoFocus
               defaultValue={note.content}
             />
