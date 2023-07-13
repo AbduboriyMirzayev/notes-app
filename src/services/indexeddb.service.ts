@@ -96,3 +96,26 @@ export const getNote = async (id: number, cb: (note: INote) => void) => {
     cb(note.result);
   };
 };
+
+export const search = async (
+  searchValue: string,
+  cb: (notes: INote[]) => void
+) => {
+  const transaction = db.transaction("notes");
+  const notes = transaction.objectStore("notes");
+  const cursorReq = notes.openCursor();
+  const foundedNotes: INote[] = [];
+  const regexp = new RegExp(searchValue, "ig");
+
+  cursorReq.onsuccess = () => {
+    const cursor = cursorReq.result;
+    if (cursor) {
+      if (cursor.value.content.search(regexp) !== -1) {
+        foundedNotes.push(cursor.value);
+      }
+      cursor.continue();
+    } else {
+      cb(foundedNotes.reverse());
+    }
+  };
+};
