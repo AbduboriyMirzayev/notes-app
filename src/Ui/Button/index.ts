@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { pxToRem } from "helpers/style";
+import { pxToRem } from "styles/converter";
 import { BORDER_RADIUS } from "styles/constants";
 import colors from "styles/colors";
 

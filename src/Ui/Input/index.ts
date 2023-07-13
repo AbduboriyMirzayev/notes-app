@@ -1,4 +1,4 @@
-import { pxToRem } from "helpers/style";
+import { pxToRem } from "styles/converter";
 import styled from "styled-components";
 import colors from "styles/colors";
 import { BORDER_RADIUS, TEXT_SIZE } from "styles/constants";

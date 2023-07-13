@@ -1,4 +1,4 @@
-export const formatDDMMYYYY = (date: Date) => {
+export const formatDate = (date: Date) => {
   const day = date.getDate();
   const month = date.getMonth();
   const year = date.getFullYear();
@@ -15,11 +15,11 @@ export const formatHours = (date: Date) => {
   return `${hours}:${minutes} ${ampm}`;
 };
 
-export const formatDate = (date: string) => {
+export const formatNoteDate = (date: string) => {
   const oldDate = new Date(date);
   const currentDate = new Date();
-  const formatedOldDate = formatDDMMYYYY(oldDate);
-  if (formatedOldDate !== formatDDMMYYYY(currentDate)) {
+  const formatedOldDate = formatDate(oldDate);
+  if (formatedOldDate !== formatDate(currentDate)) {
     return formatedOldDate;
   }
   return formatHours(oldDate);

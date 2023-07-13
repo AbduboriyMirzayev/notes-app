@@ -1,6 +1,13 @@
 import { INote } from "interfaces/notes";
+import { toast } from "react-toastify";
 
 let db: IDBDatabase;
+
+const notifyAboutError = () =>
+  toast.error("Упс... Чтото пошло не так. Попробуйте ещё раз.");
+
+const getObjectStore = () =>
+  db.transaction("notes", "readwrite").objectStore("notes");
 
 const checkDBInitialization = () =>
   new Promise((res, rej) => {
@@ -10,25 +17,23 @@ const checkDBInitialization = () =>
 
     const DBOpenRequest = window.indexedDB.open("notes", 1);
 
-    DBOpenRequest.onsuccess = (e) => {
+    DBOpenRequest.onsuccess = () => {
       db = DBOpenRequest.result;
       res(db);
     };
 
     DBOpenRequest.onerror = (e) => {
+      notifyAboutError();
       rej(e);
     };
 
-    DBOpenRequest.onupgradeneeded = (e) => {
+    DBOpenRequest.onupgradeneeded = () => {
       const db = DBOpenRequest.result;
       if (!db.objectStoreNames.contains("notes")) {
         const objectStore = db.createObjectStore("notes", {
           keyPath: "id",
         });
         objectStore.createIndex("id", "id", { unique: true });
-        objectStore.createIndex("content", "content", { unique: false });
-        objectStore.createIndex("createdAt", "createdAt", { unique: false });
-        objectStore.createIndex("isSelected", "isSelected", { unique: false });
       }
     };
   });
@@ -36,79 +41,70 @@ const checkDBInitialization = () =>
 export const createEmptyNote = async (note: INote, cb: VoidFunction) => {
   await checkDBInitialization();
 
-  const customerObjectStore = db
-    .transaction("notes", "readwrite")
-    .objectStore("notes");
+  const objectStore = getObjectStore();
 
-  const addRequest = customerObjectStore.add(note);
+  const addRequest = objectStore.add(note);
   addRequest.onsuccess = () => {
     cb();
   };
+
+  addRequest.onerror = notifyAboutError;
 };
 
 export const updateNote = (note: INote, cb: VoidFunction) => {
-  const objectStore = db.transaction("notes", "readwrite").objectStore("notes");
-  var request = objectStore.put(note);
+  const objectStore = getObjectStore();
+  var putRequest = objectStore.put(note);
 
-  request.onsuccess = () => {
+  putRequest.onsuccess = () => {
     cb();
   };
+  putRequest.onerror = notifyAboutError;
 };
 
 export const deleteNote = (noteId: number, cb: VoidFunction) => {
-  const objectStore = db.transaction("notes", "readwrite").objectStore("notes");
+  const objectStore = getObjectStore();
   const deleteRequest = objectStore.delete(noteId);
   deleteRequest.onsuccess = () => {
     cb();
   };
+
+  deleteRequest.onerror = notifyAboutError;
 };
 
-export const getNotes = async (
-  callback: (notes: INote[]) => void,
-  errorHandler?: VoidFunction
-) => {
+export const getNotes = async (callback: (notes: INote[]) => void) => {
   await checkDBInitialization();
 
-  const notes = db
-    .transaction("notes", "readwrite")
-    .objectStore("notes")
-    .getAll();
+  const notes = getObjectStore().getAll();
 
   notes.onsuccess = () => {
-    callback(notes.result);
+    callback(notes.result.reverse());
   };
 
-  notes.onerror = (error) => {
-    if (errorHandler) {
-      errorHandler();
-    }
-  };
+  notes.onerror = notifyAboutError;
 };
 
 export const getNote = async (id: number, cb: (note: INote) => void) => {
   await checkDBInitialization();
-  const note = db
-    .transaction("notes", "readwrite")
-    .objectStore("notes")
-    .get(id);
+  const note = getObjectStore().get(id);
 
   note.onsuccess = () => {
     cb(note.result);
   };
+
+  note.onerror = notifyAboutError;
 };
 
-export const search = async (
+export const searchNotes = async (
   searchValue: string,
   cb: (notes: INote[]) => void
 ) => {
-  const transaction = db.transaction("notes");
-  const notes = transaction.objectStore("notes");
-  const cursorReq = notes.openCursor();
+  const notes = getObjectStore();
+  const cursorRequest = notes.openCursor();
   const foundedNotes: INote[] = [];
   const regexp = new RegExp(searchValue, "ig");
 
-  cursorReq.onsuccess = () => {
-    const cursor = cursorReq.result;
+  cursorRequest.onsuccess = () => {
+    const cursor = cursorRequest.result;
     if (cursor) {
       if (cursor.value.content.search(regexp) !== -1) {
         foundedNotes.push(cursor.value);
@@ -118,4 +114,6 @@ export const search = async (
       cb(foundedNotes.reverse());
     }
   };
+
+  cursorRequest.onerror = notifyAboutError;
 };
