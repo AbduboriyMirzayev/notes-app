@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { ChangeEvent, useContext, useState } from "react";
 import Button from "Ui/Button";
 import Input from "Ui/Input";
 import { CreateIcon, DeleteIcon, EditIcon } from "assets/icons";
@@ -9,7 +9,7 @@ import DeleteModal from "./DeleteModal";
 function Header() {
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
 
-  const { createNote, setEditingNode, selectedNote, deleteNote } =
+  const { createNote, setEditingNode, selectedNote, deleteNote, searchNote } =
     useContext(ContextApi);
 
   const deleteModalVisibleHandler = () =>
@@ -18,6 +18,10 @@ function Header() {
   const deleteHandler = () => {
     deleteNote();
     deleteModalVisibleHandler();
+  };
+
+  const searchHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    searchNote(e.target.value);
   };
 
   return (
@@ -39,7 +43,11 @@ function Header() {
           </Button>
         </li>
       </ul>
-      <Input className="header__search" placeholder={"Поиск"} />
+      <Input
+        className="header__search"
+        onChange={searchHandler}
+        placeholder={"Поиск"}
+      />
       {isDeleteModalVisible && (
         <DeleteModal
           onDelete={deleteHandler}

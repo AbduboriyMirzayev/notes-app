@@ -8,6 +8,7 @@ import {
   deleteNote,
   getNote,
   getNotes,
+  search,
 } from "services/indexeddb.service";
 import { INote } from "interfaces/notes";
 import { updateNote } from "services/indexeddb.service";
@@ -62,7 +63,9 @@ function App() {
     selectedNote && deleteNote(selectedNote, cb);
   };
 
-  const searchNoteHandler = () => {};
+  const searchNoteHandler = (searchText: string) => {
+    search(searchText, setNotes);
+  };
 
   const contextValue: IContextValues = {
     notes,
